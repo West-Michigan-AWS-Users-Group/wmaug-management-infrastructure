@@ -3,7 +3,7 @@
 // import * as WmaugManagementInfrastructure from '../lib/wmaug-management-infrastructure-stack';
 
 // example test. To run these tests, uncomment this file along with the
-// example resource in lib/wmaug-management-infrastructure-stack.ts
+// example resource in lib/wmaug-management-infrastructure-sso.ts
 test('SQS Queue Created', () => {
 //   const app = new cdk.App();
 //     // WHEN

@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as sso from 'aws-cdk-lib/aws-sso';
 
-export class WmaugManagementInfrastructureStack extends cdk.Stack {
+export class Sso extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
