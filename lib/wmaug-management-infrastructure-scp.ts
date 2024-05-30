@@ -17,11 +17,40 @@ export class Scp extends cdk.Stack {
             "Effect": "Deny",
             "Action": [
               "iam:CreateAccessKey",
-              "iam:CreateUser"
+              "iam:CreateUser",
+              "iam:CreateLoginProfile",
+              "iam:UpdateLoginProfile",
+              "iam:DeleteAccessKey",
+              "iam:DeleteUser",
+              "iam:DeleteLoginProfile"
             ],
             "Resource": "*"
           }
         },
     });
+    
+    // create SCP blocking access to all regions except us-east-1 and us-east-2
+    new orgs.CfnPolicy(this, 'denyAllRegionsExceptUSEast', {
+      name: 'denyAllRegionsExceptUSEast',
+        description: 'Deny all regions except us-east-1 and us-east-2',
+        type: 'SERVICE_CONTROL_POLICY',
+        content:{
+          "Version": "2012-10-17",
+          "Statement": {
+            "Effect": "Deny",
+            "Action": "*",
+            "Resource": "*",
+            "Condition": {
+              "StringNotEquals": {
+                "aws:RequestedRegion": [
+                  "us-east-1",
+                  "us-east-2"
+                ]
+              }
+            }
+          }
+        },
+    });
+
     }
 }
