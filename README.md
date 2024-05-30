@@ -14,5 +14,14 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `npx cdk synth`   emits the synthesized CloudFormation template
 
 
-## Deploying and using this stack
-AWS_DEFAULT_PROFILE=profile-name npx cdk deploy --parameters instanceArnParam="arn:aws:sso:::instance/ssoins-123456789abc"
+## Manually deploying the Sso stack
+npx cdk deploy Sso --parameters instanceArnParam="arn:aws:sso:::instance/ssoins-123456789abcdefg" \
+--parameters wmaugManagementAccountNumberParam="123456789abcd" \
+--parameters wmaugModeratorAccountNumberParam="123456789abcd" \
+--parameters wmaugModeratorAdminGroupId="12345678-1234-1234-1234-abcdefghijkl" \
+--parameters wmaugFullAdminGroupId="12345678-1234-1234-1234-abcdefghijkl"
+
+## Manually deploying the Scp stack
+npx cdk deploy Scp
+
+## TODO: Configure CI to auto deploy
