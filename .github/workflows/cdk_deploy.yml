@@ -25,10 +25,20 @@ jobs:
           aws-access-key-id: ${{ secrets.SA_CDK_DEPLOYUSER_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.SA_CDK_DEPLOYUSER_AWS_SECRET_ACCESS_KEY }}
           aws-region: "us-east-2"
+
       - name: CDK synth
         run: cdk synth --all --require-approval=never
+
       - name: CDK diff
         run: cdk diff --all --require-approval=never
+
       - name: CDK deploy
         if: github.ref == 'refs/heads/main'
-        run: cdk deploy --all --require-approval=never
+        run: |
+          npx cdk deploy Sso \
+          --parameters instanceArnParam=${{ secrets.SSO_INSTANCE_ARN }} \
+          --parameters wmaugManagementAccountNumberParam=${{ secrets.WMAUG_MGMT_ACCOUNT_NUMBER }} \
+          --parameters wmaugModeratorAccountNumberParam=${{ secrets.WMAUG_MODERATOR_ACCOUNT_NUMBER }} \
+          --parameters wmaugModeratorAdminGroupId=${{ secrets.WMAUG_MODERATOR_ADMIN_GUID }} \
+          --parameters wmaugFullAdminGroupId=${{ secrets.WMAUG_MGMT_ADMIN_GUID }} \
+          --require-approval=never && npx cdk deploy Scp --require-approval=never
