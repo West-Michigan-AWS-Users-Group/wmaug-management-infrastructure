@@ -30,8 +30,8 @@ export class Scp extends cdk.Stack {
     });
     
     // create SCP blocking access to all regions except us-east-1 and us-east-2
-    new orgs.CfnPolicy(this, 'denyAllRegionsExceptUSEast', {
-      name: 'denyAllRegionsExceptUSEast',
+    new orgs.CfnPolicy(this, 'denyAllRegionsExceptUsEast', {
+      name: 'denyAllRegionsExceptUsEast',
         description: 'Deny all regions except us-east-1 and us-east-2',
         type: 'SERVICE_CONTROL_POLICY',
         content:{

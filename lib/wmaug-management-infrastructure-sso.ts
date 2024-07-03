@@ -49,6 +49,7 @@ export class Sso extends cdk.Stack {
       name: 'wmaugFullAdminPermissionSet',
       description: 'Permission set WMAUG owners will use',
       managedPolicies: ['arn:aws:iam::aws:policy/AdministratorAccess'],
+      sessionDuration: 'PT12H',
     });
 
     // Assign moderator admin to moderator account
