@@ -21,6 +21,15 @@ export class Sso extends cdk.Stack {
       },
     );
 
+    const wmaugMemberAccountNumberParam = new cdk.CfnParameter(
+      this,
+      "wmaugMemberAccountNumberParam",
+      {
+        type: "String",
+        description: "The account number of the WMAUG member account",
+      },
+    );
+
     const wmaugModeratorAccountNumberParam = new cdk.CfnParameter(
       this,
       "wmaugModeratorAccountNumberParam",
@@ -41,6 +50,24 @@ export class Sso extends cdk.Stack {
       },
     );
 
+    const wmaugMemberAdminGroupId = new cdk.CfnParameter(
+      this,
+      "wmaugMemberAdminGroupId",
+      {
+        type: "String",
+        description: "The GUID of the wmaugMemberAdmin SSO group",
+      },
+    );
+
+    const wmaugMemberGroupId = new cdk.CfnParameter(
+      this,
+      "wmaugMemberGroupId",
+      {
+        type: "String",
+        description: "The GUID of the wmaugMember SSO group",
+      },
+    );
+
     const wmaugFullAdminGroupId = new cdk.CfnParameter(
       this,
       "wmaugFullAdminGroupId",
@@ -50,7 +77,7 @@ export class Sso extends cdk.Stack {
       },
     );
 
-    // Start permission set policy creation
+    // Moderator permission set
     const wmaugModeratorAdminPermissionSet = new sso.CfnPermissionSet(
       this,
       "wmaugModeratorAdminPermissionSet",
@@ -63,12 +90,11 @@ export class Sso extends cdk.Stack {
         managedPolicies: ["arn:aws:iam::aws:policy/AdministratorAccess"],
       },
     );
-
+    // Owner permission set
     const wmaugFullAdminPermissionSet = new sso.CfnPermissionSet(
       this,
       "wmaugFullAdminPermissionSet",
       {
-        // Use the value of the CFN parameter
         instanceArn: instanceArnParam.valueAsString,
         name: "wmaugFullAdminPermissionSet",
         description: "Permission set WMAUG owners will use",
@@ -76,6 +102,28 @@ export class Sso extends cdk.Stack {
         sessionDuration: "PT12H",
       },
     );
+    // Member permission set
+    const wmaugMemberPermissionSet = new sso.CfnPermissionSet(
+      this,
+      "wmaugMemberPermissionSet",
+      {
+        instanceArn: instanceArnParam.valueAsString,
+        name: "wmaugMemberPermissionSet",
+        description: "Permission set WMAUG members will use",
+        managedPolicies: ["arn:aws:iam::aws:policy/ReadOnlyAccess"],
+        sessionDuration: "PT12H",
+      },
+    );
+
+    // Assign member users to member account
+    new sso.CfnAssignment(this, "wmaugMemberAssignment", {
+      instanceArn: instanceArnParam.valueAsString,
+      permissionSetArn: wmaugMemberPermissionSet.attrPermissionSetArn,
+      principalType: "GROUP",
+      principalId: wmaugMemberGroupId.valueAsString,
+      targetId: wmaugMemberAccountNumberParam.valueAsString,
+      targetType: "AWS_ACCOUNT",
+    });
 
     // Assign moderator admin to moderator account
     new sso.CfnAssignment(this, "wmaugModeratorAdminModeratorAssignment", {
@@ -87,6 +135,16 @@ export class Sso extends cdk.Stack {
       targetType: "AWS_ACCOUNT",
     });
 
+    // Assign member admin to member account
+    new sso.CfnAssignment(this, "wmaugMemberAdminModeratorAssignment", {
+      instanceArn: instanceArnParam.valueAsString,
+      permissionSetArn: wmaugModeratorAdminPermissionSet.attrPermissionSetArn,
+      principalType: "GROUP",
+      principalId: wmaugMemberAdminGroupId.valueAsString,
+      targetId: wmaugMemberAccountNumberParam.valueAsString,
+      targetType: "AWS_ACCOUNT",
+    });
+
     // Assign full admin to management account
     new sso.CfnAssignment(this, "wmaugFullAdminManagementAssignment", {
       instanceArn: instanceArnParam.valueAsString,
@@ -94,6 +152,16 @@ export class Sso extends cdk.Stack {
       principalType: "GROUP",
       principalId: wmaugFullAdminGroupId.valueAsString,
       targetId: wmaugManagementAccountNumberParam.valueAsString,
+      targetType: "AWS_ACCOUNT",
+    });
+
+    // Assign full admin to member account
+    new sso.CfnAssignment(this, "wmaugFullAdminMemberAssignment", {
+      instanceArn: instanceArnParam.valueAsString,
+      permissionSetArn: wmaugFullAdminPermissionSet.attrPermissionSetArn,
+      principalType: "GROUP",
+      principalId: wmaugFullAdminGroupId.valueAsString,
+      targetId: wmaugMemberAccountNumberParam.valueAsString,
       targetType: "AWS_ACCOUNT",
     });
 

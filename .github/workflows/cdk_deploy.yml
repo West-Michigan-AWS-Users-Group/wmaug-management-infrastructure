@@ -41,4 +41,7 @@ jobs:
           --parameters wmaugModeratorAccountNumberParam=${{ secrets.WMAUG_MODERATOR_ACCOUNT_NUMBER }} \
           --parameters wmaugModeratorAdminGroupId=${{ secrets.WMAUG_MODERATOR_ADMIN_GUID }} \
           --parameters wmaugFullAdminGroupId=${{ secrets.WMAUG_MGMT_ADMIN_GUID }} \
+          --parameters wmaugMemberAccountNumberParam=${{ secrets.WMAUG_MEMBER_ACCOUNT_NUMBER }} \
+          --parameters wmaugMemberAdminGroupId=${{ secrets.WMAUG_MEMBER_ADMIN_GUID }} \
+          --parameters wmaugMemberGroupId=${{ secrets.WMAUG_MEMBER_MEMBER_GUID }} \
           --require-approval=never && npx cdk deploy Scp --require-approval=never
