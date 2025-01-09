@@ -106,7 +106,18 @@ export class Sso extends cdk.Stack {
     const wmaugMemberPermissionSet = new sso.CfnPermissionSet(
       this,
       "wmaugMemberPermissionSet",
+      // allow members to assume deploy roles for manual deployment
       {
+        inlinePolicy: {
+          Version: "2012-10-17",
+          Statement: [
+            {
+              Effect: "Allow",
+              Action: "sts:AssumeRole",
+              Resource: "arn:aws:iam::*:role/cdk-*",
+            },
+          ],
+        },
         instanceArn: instanceArnParam.valueAsString,
         name: "wmaugMemberPermissionSet",
         description: "Permission set WMAUG members will use",
