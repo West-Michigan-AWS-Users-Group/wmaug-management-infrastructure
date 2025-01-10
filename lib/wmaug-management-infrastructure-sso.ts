@@ -104,27 +104,42 @@ export class Sso extends cdk.Stack {
     );
     // Member permission set
     const wmaugMemberPermissionSet = new sso.CfnPermissionSet(
-      this,
-      "wmaugMemberPermissionSet",
-      // allow members to assume deploy roles for manual deployment
-      {
-        inlinePolicy: {
-          Version: "2012-10-17",
-          Statement: [
-            {
-              Effect: "Allow",
-              Action: "sts:AssumeRole",
-              Resource: "arn:aws:iam::*:role/cdk-*",
-            },
-          ],
+  this,
+  "wmaugMemberPermissionSet",
+  {
+    inlinePolicy: {
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Effect: "Allow",
+          Action: "sts:AssumeRole",
+          Resource: "arn:aws:iam::*:role/cdk-*",
         },
-        instanceArn: instanceArnParam.valueAsString,
-        name: "wmaugMemberPermissionSet",
-        description: "Permission set WMAUG members will use",
-        managedPolicies: ["arn:aws:iam::aws:policy/ReadOnlyAccess"],
-        sessionDuration: "PT12H",
-      },
-    );
+        {
+          Effect: "Allow",
+          Action: [
+            "s3:PutObject",
+            "s3:GetObject",
+            "s3:ListBucket",
+            "s3:DeleteObject",
+            "s3:PutObjectAcl",
+            "s3:GetObjectAcl",
+            "s3:DeleteObjectAcl"
+          ],
+          Resource: [
+            "arn:aws:s3:::cdk-*",
+            "arn:aws:s3:::cdk-*/*"
+          ]
+        }
+      ],
+    },
+    instanceArn: instanceArnParam.valueAsString,
+    name: "wmaugMemberPermissionSet",
+    description: "Permission set WMAUG members will use",
+    managedPolicies: ["arn:aws:iam::aws:policy/ReadOnlyAccess"],
+    sessionDuration: "PT12H",
+  },
+);
 
     // Assign member users to member account
     new sso.CfnAssignment(this, "wmaugMemberAssignment", {
